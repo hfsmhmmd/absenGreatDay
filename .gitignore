@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.env
+.env
+config.json
+.kilo/
+.playwright-mcp/
+screenshots/
+*.png
+*.json.map

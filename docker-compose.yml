@@ -1,0 +1,14 @@
+services:
+  absen:
+    build: .
+    container_name: absen
+    environment:
+      - GDHR_URL=${GDHR_URL:-}
+      - GDHR_USERNAME=${GDHR_USERNAME:-}
+      - GDHR_PASSWORD=${GDHR_PASSWORD:-}
+      - GDHR_COMPANY=${GDHR_COMPANY:-}
+      - HEADLESS=1
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./screenshots:/app/screenshots
+    restart: "no"
