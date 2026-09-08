@@ -1,5 +1,7 @@
 import json
+import math
 import os
+import random
 
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
@@ -157,6 +159,27 @@ def dump_state(page, label):
     print(json.dumps(state, ensure_ascii=False, indent=1)[:1500])
 
 
+def acak_lokasi(geo, radius_meter=5):
+    """Geser koordinat secara random dalam radius `radius_meter` meter dari titik asal."""
+    # Konversi meter ke derajat
+    # 1 derajat lintang ≈ 111_320 m (konstan)
+    # 1 derajat bujur  ≈ 111_320 * cos(lat) m (tergantung lintang)
+    lat_asal = geo["latitude"]
+    lon_asal = geo["longitude"]
+
+    sudut = random.uniform(0, 2 * math.pi)          # arah acak (0–360°)
+    jarak = random.uniform(0, radius_meter)          # jarak acak (0–5 m)
+
+    delta_lat = (jarak * math.cos(sudut)) / 111_320
+    delta_lon = (jarak * math.sin(sudut)) / (111_320 * math.cos(math.radians(lat_asal)))
+
+    return {
+        "latitude":  round(lat_asal + delta_lat, 7),
+        "longitude": round(lon_asal + delta_lon, 7),
+        "accuracy":  geo.get("accuracy", 10),
+    }
+
+
 def main():
     os.makedirs(SCREENSHOT_DIR, exist_ok=True)
     config = load_config()
@@ -164,6 +187,7 @@ def main():
         browser = p.chromium.launch(headless=config["headless"])
         geo = config.get("lokasi")
         if geo:
+            geo = acak_lokasi(geo)  # acak dalam radius 5 m dari titik asal
             context = browser.new_context(
                 geolocation={
                     "latitude": geo["latitude"],
