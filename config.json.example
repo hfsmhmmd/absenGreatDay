@@ -4,6 +4,7 @@
   "password": "YOUR_PASSWORD",
   "company": "YOUR_COMPANY_NAME",
   "headless": false,
+  "keep_open": false,
   "lokasi": {
     "latitude": -6.240614,
     "longitude": 106.8234148,
